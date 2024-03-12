@@ -42,18 +42,18 @@ public class ServerThread implements Runnable{
             showHistory();
             sendMessageToEveryoneExceptSender(username + " has joined the chat room!");
 
-            chatWithOthers(message, input);
-            
+            chatWithOthers(input);
+
 
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
         finally {
             sendMessageToEveryoneExceptSender(username + " has left the chat room!");
             clients.remove(this);
-            if(output != null )output.close();
+            if(output != null ) output.close();
             try {
-                if(socket != null)socket.close();
+                if(socket != null) socket.close();
 
             } catch (IOException e) {
                 throw new RuntimeException(e);
@@ -63,7 +63,6 @@ public class ServerThread implements Runnable{
     }
 
     private boolean usernameAlreadyExists(String username, PrintWriter output){
-        System.out.println("Checking if username already exists");
         if(usernames.contains(username)){
             output.println("Username already exists. Please enter a different username: ");
             return true;
@@ -99,8 +98,6 @@ public class ServerThread implements Runnable{
             word = iterator.next();
             if(censoredMessage.contains(word))
                  censoredMessage = censoredMessage.replace(word, word.charAt(0)+"*".repeat(word.length()-2)+word.charAt(word.length()-1));
-            System.out.println(word);
-            System.out.println(censoredMessage);
         }
         String formattedMessage =  LocalDateTime.now().format(formatter) + " - " + username + " : " + censoredMessage;
         if(messages.size() == messageLimit)
@@ -115,13 +112,13 @@ public class ServerThread implements Runnable{
         });
         output.println("End of chat history.");
     }
-    private void chatWithOthers(String message, BufferedReader input) throws IOException {
+    private void chatWithOthers(BufferedReader input) throws IOException {
+        String message;
         while(!(message = input.readLine()).equals("/leave")){
             message = formatMessage(message, username);
             sendMessageToEveryoneExceptSender(message);
             output.println(message);
 
-            System.out.println(messages.size());
         }
         output.println("Hope to see you soon! And don't forget to bring pizza!");
         usernames.remove(username);

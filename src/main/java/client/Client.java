@@ -23,7 +23,8 @@ public class Client {
                 try {
                     receiveMessages(input);
                 } catch (IOException e) {
-                    throw new RuntimeException(e);
+                    System.out.println("Reading from server failed.");
+                    System.exit(0);
                 }
             });
 
@@ -33,7 +34,8 @@ public class Client {
                     chat(keyboard, output);
 
                 } catch (IOException e) {
-                    throw new RuntimeException(e);
+                    System.out.println("Writing from server failed.");
+                    System.exit(0);
                 }
             });
 
